@@ -18,22 +18,15 @@ export default defineConfig({
     defaultStrategy: 'viewport', // 画面内に入ったら読み込み開始
   },
   image: {
-    breakpoints: [1000, 2000],
+    breakpoints: [500, 1000, 2000],
   },
   integrations: [
     starlight({
       title: 'LawManager',
-      // ... その他の設定
-      favicon: '/images/favicon.svg',
+      favicon: '/images/favicon.png',
       head: [],
 
-      components: {
-        // Head: './src/components/CustomHeader.astro',
-        // Footer: './src/components/CustomFooter.astro',
-        // Banner: './src/components/LegacyNotice.astro',
-        // Pagination: './src/components/CustomPagination.astro',
-        // SiteTitle: './src/components/CustomSiteTitle.astro',
-      },
+      components: {},
       customCss: [
         './src/styles/main.scss', // ここにSCSSファイルを指定
       ],
