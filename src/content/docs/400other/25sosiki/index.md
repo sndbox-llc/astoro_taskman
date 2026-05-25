@@ -19,7 +19,7 @@ sidebar:
 
 <dl class="basic">
 <dt>利用開始日</dt>
-<dd>L-Managerを利用し始めた日が表示されます</dd>
+<dd>LawManagerを利用し始めた日が表示されます</dd>
 <dt>利用期限</dt>
 <dd>ご利用可能な期限です</dd>
 <dt>利用可能人数</dt>
