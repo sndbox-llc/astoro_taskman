@@ -2,13 +2,51 @@
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
 import sitemap from '@astrojs/sitemap'
-import rehypeFigure from 'rehype-figure'
+import rehypeFigure from '@microflash/rehype-figure'
 import starlightImageZoom from 'starlight-image-zoom'
-import remarkHeadingId from 'remark-heading-id'
 import starlightSidebarTopics from 'starlight-sidebar-topics'
 import starlightLinksValidator from 'starlight-links-validator'
+import remarkGfm from 'remark-gfm'
+import indexnow from 'astro-indexnow'
+import { unified } from '@astrojs/markdown-remark'
+import { visit } from 'unist-util-visit'
+import tailwindcss from '@tailwindcss/vite'
 
 const isProd = process.env.NODE_ENV === 'production'
+
+function remarkCustomHeadingId() {
+  return (tree, file) => {
+    // ファイルが .mdx かどうかを判定
+    const isMdx = file.history[0]?.endsWith('.mdx')
+
+    visit(tree, 'heading', (node) => {
+      const lastChild = node.children[node.children.length - 1]
+      if (lastChild && lastChild.type === 'text') {
+        let match = null
+        let id = null
+
+        if (isMdx) {
+          // 【MDX用】気難しいので [#id=xxx] だけを許可
+          match = lastChild.value.match(/\s*\[#id=([\w-]+)\]$/)
+          if (match) id = match[1]
+        } else {
+          // 【MD用】従来の {#xxx} と 新しい [#id=xxx] の両方を許可
+          const mdMatch = lastChild.value.match(/\s*\{#([\w-]+)\}$|\s*\[#id=([\w-]+)\]$/)
+          if (mdMatch) id = mdMatch[1] || mdMatch[2]
+        }
+
+        if (id) {
+          node.data = node.data || {}
+          node.data.hProperties = node.data.hProperties || {}
+          node.data.hProperties.id = id
+
+          // マッチした部分（{#xxx} または [#id=xxx]）を本文から消去
+          lastChild.value = lastChild.value.replace(/\s*\{#[\w-]+\}$|\s*\[#id=[\w-]+\]$/, '')
+        }
+      }
+    })
+  }
+}
 
 export default defineConfig({
   site: 'https://lawmanager.hotaka-g.jp/',
@@ -23,6 +61,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'LawManager',
+      lastUpdated: true,
       favicon: '/images/favicon.png',
       head: [],
 
@@ -193,8 +232,13 @@ export default defineConfig({
     sitemap(),
   ],
   markdown: {
-    // ここに remarkPlugins を追加
-    remarkPlugins: [remarkHeadingId],
-    rehypePlugins: [[rehypeFigure, { className: 'custom-figure' }]],
+    processor: unified({
+      remarkPlugins: [remarkGfm, remarkCustomHeadingId],
+      rehypePlugins: [[rehypeFigure, { className: 'custom-figure' }]],
+    }),
+  },
+
+  vite: {
+    plugins: [tailwindcss()],
   },
 })
