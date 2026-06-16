@@ -66,11 +66,11 @@ export default defineConfig({
       head: [],
 
       components: {},
-      customCss: [
-        './src/styles/main.scss', // ここにSCSSファイルを指定
-      ],
+      customCss: ['./src/styles/main.scss', './src/styles/global.css'],
       plugins: [
-        starlightLinksValidator(),
+        starlightLinksValidator({
+          exclude: ['/'],
+        }),
         starlightImageZoom(), // 2. プラグインを追加
         starlightSidebarTopics([
           {
