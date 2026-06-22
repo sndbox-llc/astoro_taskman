@@ -7,10 +7,10 @@ import starlightImageZoom from 'starlight-image-zoom'
 import starlightSidebarTopics from 'starlight-sidebar-topics'
 import starlightLinksValidator from 'starlight-links-validator'
 import remarkGfm from 'remark-gfm'
-import indexnow from 'astro-indexnow'
 import { unified } from '@astrojs/markdown-remark'
 import { visit } from 'unist-util-visit'
 import tailwindcss from '@tailwindcss/vite'
+import starlightScrollToTop from 'starlight-scroll-to-top'
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -68,6 +68,16 @@ export default defineConfig({
       components: {},
       customCss: ['./src/styles/main.scss', './src/styles/global.css'],
       plugins: [
+        starlightScrollToTop({
+          showOnHomepage: true,
+          showProgressRing: true,
+          showTooltip: true,
+          tooltipText: {
+            en: 'Scroll to top',
+            ja: 'トップへ戻る',
+          },
+        }),
+
         starlightLinksValidator({
           exclude: ['/'],
         }),
