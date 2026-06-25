@@ -4,3 +4,4 @@ allowBuilds:
   sharp: true
 minimumReleaseAgeExclude:
   - astro@6.4.7
+  - astro-indexnow@2.3.5
